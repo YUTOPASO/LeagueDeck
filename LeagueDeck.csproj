@@ -7,7 +7,7 @@
     <ProjectGuid>{4635D874-69C0-4010-BE46-77EF92EB1553}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>LeagueDeck</RootNamespace>
-    <AssemblyName>dev.timeblaster.leaguedeck</AssemblyName>
+    <AssemblyName>dev.kubo.leaguedeck</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -18,7 +18,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\dev.timeblaster.leaguedeck.sdPlugin\</OutputPath>
+    <OutputPath>bin\Debug\dev.kubo.leaguedeck.sdPlugin\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -27,7 +27,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\dev.timeblaster.leaguedeck.sdPlugin\</OutputPath>
+    <OutputPath>bin\Release\dev.kubo.leaguedeck.sdPlugin\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>

@@ -12,7 +12,7 @@
       ],
       "SupportedInMultiActions": false,
       "Tooltip": "Automagically loads the enemy's spell from selected player into your StreamDeck so you will always know when to predict the enemy",
-      "UUID": "dev.timeblaster.leaguedeck.spelltimer",
+      "UUID": "dev.kubo.leaguedeck.spelltimer",
       "PropertyInspectorPath": "PropertyInspector/SpellTimer.html"
     },
     {
@@ -27,18 +27,18 @@
       ],
       "SupportedInMultiActions": false,
       "Tooltip": "Displays when the selected item is purchasable and buys it on activation.",
-      "UUID": "dev.timeblaster.leaguedeck.buyitem",
+      "UUID": "dev.kubo.leaguedeck.buyitem",
       "PropertyInspectorPath": "PropertyInspector/BuyItem.html"
     }
   ],
-  "Author": "TimeBlaster",
+  "Author": "kubo",
   "Name": "LeagueDeck",
   "Description": "Provides tools for League of Legends to help you keep track of the game.",
   "Icon": "Images/Plugin/pluginIcon",
-  "URL": "https://github.com/TimeBlaster/LeagueDeck",
+  "URL": "https://github.com/YUTOPASO/LeagueDeck",
   "Version": "2.5",
-  "CodePath": "dev.timeblaster.leaguedeck",
-  "Category": "LeagueDeck",
+  "CodePath": "dev.kubo.leaguedeck",
+  "Category": "LeagueDeck Enhanced",
   "CategoryIcon": "Images/Plugin/categoryIcon",
   "OS": [
     {
