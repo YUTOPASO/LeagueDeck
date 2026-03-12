@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Auto Ban</title>
+    <link rel="stylesheet" href="sdpi.css">
+    <script src="sdtools.common.js"></script>
+</head>
+<body>
+    <div class="sdpi-wrapper">
+        <div type="text" class="sdpi-item">
+            <div class="sdpi-item-label">Champion</div>
+            <input class="sdpi-item-value" id="championName" type="text" placeholder="e.g. Yasuo" oninput="setSettings()">
+        </div>
+        <div class="sdpi-item">
+            <details class="message info">
+                <summary>Enter the champion's display name to auto-ban during ban phase.</summary>
+            </details>
+        </div>
+    </div>
+    <script>
+        function setSettings() {
+            var payload = {};
+            payload.championName = document.getElementById('championName').value;
+            setSettingsToPlugin(payload);
+        }
+        document.addEventListener('websocketCreate', function () {
+            websocket.addEventListener('message', function (event) {
+                var jsonObj = JSON.parse(event.data);
+                if (jsonObj.event === 'sendToPropertyInspector') {
+                    var payload = jsonObj.payload;
+                    document.getElementById('championName').value = payload.championName || '';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

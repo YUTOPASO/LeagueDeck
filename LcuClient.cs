@@ -236,5 +236,237 @@ namespace LeagueDeck
                 return false;
             }
         }
+        public async Task<bool> AcceptReadyCheck()
+        {
+            if (!_connected)
+                return false;
+
+            try
+            {
+                var content = new StringContent("", Encoding.UTF8, "application/json");
+                var response = await _httpClient.PostAsync("/lol-matchmaking/v1/ready-check/accept", content);
+                return response.IsSuccessStatusCode;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public async Task<string> GetReadyCheckState()
+        {
+            if (!_connected)
+                return null;
+
+            try
+            {
+                var response = await _httpClient.GetAsync("/lol-matchmaking/v1/ready-check");
+                if (!response.IsSuccessStatusCode)
+                    return null;
+
+                var json = await response.Content.ReadAsStringAsync();
+                var data = JObject.Parse(json);
+                return data["state"]?.Value<string>();
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public async Task<string> GetPlayerState()
+        {
+            if (!_connected)
+                return null;
+
+            try
+            {
+                var response = await _httpClient.GetAsync("/lol-matchmaking/v1/ready-check");
+                if (!response.IsSuccessStatusCode)
+                    return null;
+
+                var json = await response.Content.ReadAsStringAsync();
+                var data = JObject.Parse(json);
+                return data["playerResponse"]?.Value<string>();
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public async Task<bool> PickChampion(int championId)
+        {
+            if (!_connected)
+                return false;
+
+            try
+            {
+                var session = await GetChampSelectSession();
+                if (session == null)
+                    return false;
+
+                var localCellId = session["localPlayerCellId"]?.Value<int>() ?? -1;
+                var actions = session["actions"] as JArray;
+                if (actions == null)
+                    return false;
+
+                foreach (JArray actionGroup in actions)
+                {
+                    foreach (var action in actionGroup)
+                    {
+                        var actorCellId = action["actorCellId"]?.Value<int>() ?? -1;
+                        var type = action["type"]?.Value<string>();
+                        var isInProgress = action["isInProgress"]?.Value<bool>() ?? false;
+                        var completed = action["completed"]?.Value<bool>() ?? false;
+
+                        if (actorCellId == localCellId && type == "pick" && isInProgress && !completed)
+                        {
+                            var actionId = action["id"].Value<int>();
+                            var body = new JObject
+                            {
+                                ["championId"] = championId,
+                                ["completed"] = true
+                            };
+                            var content = new StringContent(body.ToString(), Encoding.UTF8, "application/json");
+
+                            var request = new HttpRequestMessage(new HttpMethod("PATCH"),
+                                $"/lol-champ-select/v1/session/actions/{actionId}");
+                            request.Content = content;
+                            var response = await _httpClient.SendAsync(request);
+                            return response.IsSuccessStatusCode;
+                        }
+                    }
+                }
+
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Logger.Instance.LogMessage(TracingLevel.DEBUG, $"PickChampion error: {ex.Message}");
+                return false;
+            }
+        }
+
+        public async Task<bool> BanChampion(int championId)
+        {
+            if (!_connected)
+                return false;
+
+            try
+            {
+                var session = await GetChampSelectSession();
+                if (session == null)
+                    return false;
+
+                var localCellId = session["localPlayerCellId"]?.Value<int>() ?? -1;
+                var actions = session["actions"] as JArray;
+                if (actions == null)
+                    return false;
+
+                foreach (JArray actionGroup in actions)
+                {
+                    foreach (var action in actionGroup)
+                    {
+                        var actorCellId = action["actorCellId"]?.Value<int>() ?? -1;
+                        var type = action["type"]?.Value<string>();
+                        var isInProgress = action["isInProgress"]?.Value<bool>() ?? false;
+                        var completed = action["completed"]?.Value<bool>() ?? false;
+
+                        if (actorCellId == localCellId && type == "ban" && isInProgress && !completed)
+                        {
+                            var actionId = action["id"].Value<int>();
+                            var body = new JObject
+                            {
+                                ["championId"] = championId,
+                                ["completed"] = true
+                            };
+                            var content = new StringContent(body.ToString(), Encoding.UTF8, "application/json");
+
+                            var request = new HttpRequestMessage(new HttpMethod("PATCH"),
+                                $"/lol-champ-select/v1/session/actions/{actionId}");
+                            request.Content = content;
+                            var response = await _httpClient.SendAsync(request);
+                            return response.IsSuccessStatusCode;
+                        }
+                    }
+                }
+
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Logger.Instance.LogMessage(TracingLevel.DEBUG, $"BanChampion error: {ex.Message}");
+                return false;
+            }
+        }
+
+        public async Task<bool> SetSummonerSpells(int spell1Id, int spell2Id)
+        {
+            if (!_connected)
+                return false;
+
+            try
+            {
+                var body = new JObject
+                {
+                    ["spell1Id"] = spell1Id,
+                    ["spell2Id"] = spell2Id
+                };
+                var content = new StringContent(body.ToString(), Encoding.UTF8, "application/json");
+
+                var request = new HttpRequestMessage(new HttpMethod("PATCH"),
+                    "/lol-champ-select/v1/session/my-selection");
+                request.Content = content;
+                var response = await _httpClient.SendAsync(request);
+                return response.IsSuccessStatusCode;
+            }
+            catch (Exception ex)
+            {
+                Logger.Instance.LogMessage(TracingLevel.DEBUG, $"SetSummonerSpells error: {ex.Message}");
+                return false;
+            }
+        }
+
+        public async Task<JObject> GetRankedStats()
+        {
+            if (!_connected)
+                return null;
+
+            try
+            {
+                var response = await _httpClient.GetAsync("/lol-ranked/v1/current-ranked-stats");
+                if (!response.IsSuccessStatusCode)
+                    return null;
+
+                var content = await response.Content.ReadAsStringAsync();
+                return JObject.Parse(content);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public async Task<long> GetCurrentSummonerId()
+        {
+            if (!_connected)
+                return 0;
+
+            try
+            {
+                var response = await _httpClient.GetAsync("/lol-summoner/v1/current-summoner");
+                if (!response.IsSuccessStatusCode)
+                    return 0;
+
+                var content = await response.Content.ReadAsStringAsync();
+                var data = JObject.Parse(content);
+                return data["summonerId"]?.Value<long>() ?? 0;
+            }
+            catch
+            {
+                return 0;
+            }
+        }
     }
 }

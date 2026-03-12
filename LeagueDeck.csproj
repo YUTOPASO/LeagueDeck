@@ -88,6 +88,12 @@
     <Compile Include="OpggPlugin.cs" />
     <Compile Include="RuneSetupPlugin.cs" />
     <Compile Include="GameNotifierPlugin.cs" />
+    <Compile Include="ObjectiveTimerPlugin.cs" />
+    <Compile Include="AutoAcceptPlugin.cs" />
+    <Compile Include="AutoPickPlugin.cs" />
+    <Compile Include="AutoBanPlugin.cs" />
+    <Compile Include="AutoSummonersPlugin.cs" />
+    <Compile Include="LiveRankPlugin.cs" />
     <Compile Include="LeagueInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -200,6 +206,15 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="PropertyInspector\sdpi.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PropertyInspector\AutoPick.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PropertyInspector\AutoBan.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PropertyInspector\AutoSummoners.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="PropertyInspector\sdtools.common.js">

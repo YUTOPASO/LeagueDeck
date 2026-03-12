@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Auto Pick</title>
+    <link rel="stylesheet" href="sdpi.css">
+    <script src="sdtools.common.js"></script>
+</head>
+<body>
+    <div class="sdpi-wrapper">
+        <div type="text" class="sdpi-item">
+            <div class="sdpi-item-label">Champion</div>
+            <input class="sdpi-item-value" id="championName" type="text" placeholder="e.g. Ahri" oninput="setSettings()">
+        </div>
+        <div class="sdpi-item">
+            <details class="message info">
+                <summary>Enter the champion's display name (e.g. Ahri, Yasuo, Lee Sin). Auto-picks when your turn comes in champ select.</summary>
+            </details>
+        </div>
+    </div>
+    <script>
+        function setSettings() {
+            var payload = {};
+            payload.championName = document.getElementById('championName').value;
+            setSettingsToPlugin(payload);
+        }
+        document.addEventListener('websocketCreate', function () {
+            websocket.addEventListener('message', function (event) {
+                var jsonObj = JSON.parse(event.data);
+                if (jsonObj.event === 'sendToPropertyInspector') {
+                    var payload = jsonObj.payload;
+                    document.getElementById('championName').value = payload.championName || '';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

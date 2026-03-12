@@ -90,6 +90,93 @@
     },
     {
       "Icon": "Images/Plugin/pluginIcon",
+      "Name": "Objective Timer",
+      "States": [
+        {
+          "Image": "Images/Plugin/pluginIcon",
+          "TitleAlignment": "middle",
+          "FontSize": "10"
+        }
+      ],
+      "SupportedInMultiActions": false,
+      "Tooltip": "Automatically tracks Dragon, Baron, and Herald respawn timers. Blinks at 60s remaining.",
+      "UUID": "dev.kubo.leaguedeck.objectivetimer"
+    },
+    {
+      "Icon": "Images/Plugin/pluginIcon",
+      "Name": "Auto Accept",
+      "States": [
+        {
+          "Image": "Images/Plugin/pluginIcon",
+          "TitleAlignment": "middle",
+          "FontSize": "12"
+        }
+      ],
+      "SupportedInMultiActions": false,
+      "Tooltip": "Automatically accepts queue pop. Toggle on/off by pressing the button.",
+      "UUID": "dev.kubo.leaguedeck.autoaccept"
+    },
+    {
+      "Icon": "Images/Plugin/pluginIcon",
+      "Name": "Auto Pick",
+      "States": [
+        {
+          "Image": "Images/Plugin/pluginIcon",
+          "TitleAlignment": "middle",
+          "FontSize": "10"
+        }
+      ],
+      "SupportedInMultiActions": false,
+      "Tooltip": "Automatically picks and locks in the configured champion during champ select.",
+      "UUID": "dev.kubo.leaguedeck.autopick",
+      "PropertyInspectorPath": "PropertyInspector/AutoPick.html"
+    },
+    {
+      "Icon": "Images/Plugin/pluginIcon",
+      "Name": "Auto Ban",
+      "States": [
+        {
+          "Image": "Images/Plugin/pluginIcon",
+          "TitleAlignment": "middle",
+          "FontSize": "10"
+        }
+      ],
+      "SupportedInMultiActions": false,
+      "Tooltip": "Automatically bans the configured champion during ban phase.",
+      "UUID": "dev.kubo.leaguedeck.autoban",
+      "PropertyInspectorPath": "PropertyInspector/AutoBan.html"
+    },
+    {
+      "Icon": "Images/Plugin/pluginIcon",
+      "Name": "Auto Summoners",
+      "States": [
+        {
+          "Image": "Images/Plugin/pluginIcon",
+          "TitleAlignment": "middle",
+          "FontSize": "10"
+        }
+      ],
+      "SupportedInMultiActions": false,
+      "Tooltip": "Automatically applies configured summoner spells when champion is locked in.",
+      "UUID": "dev.kubo.leaguedeck.autosummoners",
+      "PropertyInspectorPath": "PropertyInspector/AutoSummoners.html"
+    },
+    {
+      "Icon": "Images/Plugin/pluginIcon",
+      "Name": "Live Rank",
+      "States": [
+        {
+          "Image": "Images/Plugin/pluginIcon",
+          "TitleAlignment": "middle",
+          "FontSize": "10"
+        }
+      ],
+      "SupportedInMultiActions": false,
+      "Tooltip": "Displays your current ranked tier, division, and LP. Press to toggle Solo/Flex.",
+      "UUID": "dev.kubo.leaguedeck.liverank"
+    },
+    {
+      "Icon": "Images/Plugin/pluginIcon",
       "Name": "Rune Setup",
       "States": [
         {

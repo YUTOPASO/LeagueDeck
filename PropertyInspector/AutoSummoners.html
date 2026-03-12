@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Auto Summoners</title>
+    <link rel="stylesheet" href="sdpi.css">
+    <script src="sdtools.common.js"></script>
+</head>
+<body>
+    <div class="sdpi-wrapper">
+        <div type="select" class="sdpi-item">
+            <div class="sdpi-item-label">Spell 1</div>
+            <select class="sdpi-item-value select" id="spell1" onchange="setSettings()">
+                <option value="Flash">Flash</option>
+                <option value="Ignite">Ignite</option>
+                <option value="Teleport">Teleport</option>
+                <option value="Heal">Heal</option>
+                <option value="Exhaust">Exhaust</option>
+                <option value="Barrier">Barrier</option>
+                <option value="Cleanse">Cleanse</option>
+                <option value="Ghost">Ghost</option>
+                <option value="Smite">Smite</option>
+                <option value="Mark">Mark (ARAM)</option>
+            </select>
+        </div>
+        <div type="select" class="sdpi-item">
+            <div class="sdpi-item-label">Spell 2</div>
+            <select class="sdpi-item-value select" id="spell2" onchange="setSettings()">
+                <option value="Teleport">Teleport</option>
+                <option value="Flash">Flash</option>
+                <option value="Ignite">Ignite</option>
+                <option value="Heal">Heal</option>
+                <option value="Exhaust">Exhaust</option>
+                <option value="Barrier">Barrier</option>
+                <option value="Cleanse">Cleanse</option>
+                <option value="Ghost">Ghost</option>
+                <option value="Smite">Smite</option>
+                <option value="Mark">Mark (ARAM)</option>
+            </select>
+        </div>
+    </div>
+    <script>
+        function setSettings() {
+            var payload = {};
+            payload.spell1 = document.getElementById('spell1').value;
+            payload.spell2 = document.getElementById('spell2').value;
+            setSettingsToPlugin(payload);
+        }
+        document.addEventListener('websocketCreate', function () {
+            websocket.addEventListener('message', function (event) {
+                var jsonObj = JSON.parse(event.data);
+                if (jsonObj.event === 'sendToPropertyInspector') {
+                    var payload = jsonObj.payload;
+                    if (payload.spell1) document.getElementById('spell1').value = payload.spell1;
+                    if (payload.spell2) document.getElementById('spell2').value = payload.spell2;
+                }
+            });
+        });
+    </script>
+</body>
+</html>
