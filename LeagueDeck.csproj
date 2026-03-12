@@ -85,6 +85,8 @@
     <Compile Include="LcuClient.cs" />
     <Compile Include="ChampSelectSettings.cs" />
     <Compile Include="ChampSelectPlugin.cs" />
+    <Compile Include="OpggPlugin.cs" />
+    <Compile Include="RuneSetupPlugin.cs" />
     <Compile Include="LeagueInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

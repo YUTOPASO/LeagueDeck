@@ -145,5 +145,96 @@ namespace LeagueDeck
                 return null;
             }
         }
+
+        public async Task<int> GetMyChampionId()
+        {
+            var session = await GetChampSelectSession();
+            if (session == null)
+                return 0;
+
+            var localCellId = session["localPlayerCellId"]?.Value<int>() ?? -1;
+            var myTeam = session["myTeam"] as JArray;
+            if (myTeam == null)
+                return 0;
+
+            foreach (var member in myTeam)
+            {
+                var cellId = member["cellId"]?.Value<int>() ?? -1;
+                if (cellId == localCellId)
+                    return member["championId"]?.Value<int>() ?? 0;
+            }
+
+            return 0;
+        }
+
+        public async Task<JObject> GetCurrentRunePage()
+        {
+            if (!_connected)
+                return null;
+
+            try
+            {
+                var response = await _httpClient.GetAsync("/lol-perks/v1/currentpage");
+                if (!response.IsSuccessStatusCode)
+                    return null;
+
+                var content = await response.Content.ReadAsStringAsync();
+                return JObject.Parse(content);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public async Task<bool> DeleteRunePage(int pageId)
+        {
+            if (!_connected)
+                return false;
+
+            try
+            {
+                var response = await _httpClient.DeleteAsync($"/lol-perks/v1/pages/{pageId}");
+                return response.IsSuccessStatusCode;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> CreateRunePage(string name, int primaryStyleId, int subStyleId, int[] selectedPerkIds)
+        {
+            if (!_connected)
+                return false;
+
+            try
+            {
+                var body = new JObject
+                {
+                    ["name"] = name,
+                    ["primaryStyleId"] = primaryStyleId,
+                    ["subStyleId"] = subStyleId,
+                    ["selectedPerkIds"] = new JArray(selectedPerkIds),
+                    ["current"] = true
+                };
+
+                var content = new StringContent(body.ToString(), Encoding.UTF8, "application/json");
+                var response = await _httpClient.PostAsync("/lol-perks/v1/pages", content);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var responseBody = await response.Content.ReadAsStringAsync();
+                    Logger.Instance.LogMessage(TracingLevel.DEBUG, $"CreateRunePage failed: {response.StatusCode} - {responseBody}");
+                }
+
+                return response.IsSuccessStatusCode;
+            }
+            catch (Exception ex)
+            {
+                Logger.Instance.LogMessage(TracingLevel.DEBUG, $"CreateRunePage error: {ex.Message}");
+                return false;
+            }
+        }
     }
 }

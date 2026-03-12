@@ -59,6 +59,34 @@
       "Tooltip": "Shows enemy champion picks during champion select.",
       "UUID": "dev.kubo.leaguedeck.champselect",
       "PropertyInspectorPath": "PropertyInspector/ChampSelect.html"
+    },
+    {
+      "Icon": "Images/Plugin/pluginIcon",
+      "Name": "OP.GG",
+      "States": [
+        {
+          "Image": "Images/Plugin/pluginIcon",
+          "TitleAlignment": "middle",
+          "FontSize": "12"
+        }
+      ],
+      "SupportedInMultiActions": false,
+      "Tooltip": "Opens OP.GG for your current champion. Works in champ select and in-game.",
+      "UUID": "dev.kubo.leaguedeck.opgg"
+    },
+    {
+      "Icon": "Images/Plugin/pluginIcon",
+      "Name": "Rune Setup",
+      "States": [
+        {
+          "Image": "Images/Plugin/pluginIcon",
+          "TitleAlignment": "middle",
+          "FontSize": "10"
+        }
+      ],
+      "SupportedInMultiActions": false,
+      "Tooltip": "Auto-applies recommended runes for your champion during champion select.",
+      "UUID": "dev.kubo.leaguedeck.runesetup"
     }
   ],
   "Author": "kubo",
