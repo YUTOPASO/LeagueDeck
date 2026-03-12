@@ -48,14 +48,14 @@ namespace LeagueDeck
         private string _latestVersion;
 
         private const string cInGameApiBaseUrl = "https://127.0.0.1:2999/liveclientdata";
-        private const string cVersionsUrl = "https://ddragon.bangingheads.net/api/versions.json";
-        private const string cChampionsDataUrl = "https://ddragon.bangingheads.net/cdn/{0}/data/en_US/champion.json";
-        private const string cChampionDataUrl = "https://ddragon.bangingheads.net/cdn/{0}/data/en_US/champion/{1}.json";
-        private const string cChampionImageUrl = "https://ddragon.bangingheads.net/cdn/{0}/img/champion/{1}.png";
-        private const string cSummonerSpellDataUrl = "https://ddragon.bangingheads.net/cdn/{0}/data/en_US/summoner.json";
-        private const string cSpellImageUrl = "https://ddragon.bangingheads.net/cdn/{0}/img/spell/{1}.png";
-        private const string cItemDataUrl = "https://ddragon.bangingheads.net/cdn/{0}/data/en_US/item.json";
-        private const string cItemImageUrl = "https://ddragon.bangingheads.net/cdn/{0}/img/item/{1}.png";
+        private const string cVersionsUrl = "https://ddragon.leagueoflegends.com/api/versions.json";
+        private const string cChampionsDataUrl = "https://ddragon.leagueoflegends.com/cdn/{0}/data/en_US/champion.json";
+        private const string cChampionDataUrl = "https://ddragon.leagueoflegends.com/cdn/{0}/data/en_US/champion/{1}.json";
+        private const string cChampionImageUrl = "https://ddragon.leagueoflegends.com/cdn/{0}/img/champion/{1}.png";
+        private const string cSummonerSpellDataUrl = "https://ddragon.leagueoflegends.com/cdn/{0}/data/en_US/summoner.json";
+        private const string cSpellImageUrl = "https://ddragon.leagueoflegends.com/cdn/{0}/img/spell/{1}.png";
+        private const string cItemDataUrl = "https://ddragon.leagueoflegends.com/cdn/{0}/data/en_US/item.json";
+        private const string cItemImageUrl = "https://ddragon.leagueoflegends.com/cdn/{0}/img/item/{1}.png";
 
         private readonly string _championImageFolder = Path.Combine(Environment.CurrentDirectory, "Images", "Champions");
         private readonly string _spellImageFolder = Path.Combine(Environment.CurrentDirectory, "Images", "Spells");
