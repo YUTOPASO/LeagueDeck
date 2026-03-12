@@ -7,10 +7,20 @@
 </head>
 <body>
     <div class="sdpi-wrapper" id="mainSettings">
+        <div type="select" class="sdpi-item" id="select_summoner">
+            <div class="sdpi-item-label">Enemy</div>
+            <select class="sdpi-item-value select sdProperty" id="summoner" oninput="setSettings()">
+                <option value="0">Enemy 1</option>
+                <option value="1">Enemy 2</option>
+                <option value="2">Enemy 3</option>
+                <option value="3">Enemy 4</option>
+                <option value="4">Enemy 5</option>
+            </select>
+        </div>
         <div class="sdpi-item">
             <div class="sdpi-item-label">Info</div>
             <div class="sdpi-item-value">
-                <span>Shows enemy champion picks during champion select. Requires League Client to be running.</span>
+                <span>Shows the selected enemy's champion pick during champion select. Place 5 buttons (Enemy 1-5) for full coverage.</span>
             </div>
         </div>
     </div>

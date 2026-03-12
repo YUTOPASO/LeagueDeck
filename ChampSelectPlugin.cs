@@ -3,6 +3,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,6 +20,7 @@ namespace LeagueDeck
         private LcuClient _lcu;
 
         private bool _wasInChampSelect;
+        private int _lastChampionId;
         private int _tickCounter;
 
         public ChampSelectPlugin(SDConnection connection, InitialPayload payload)
@@ -82,14 +84,12 @@ namespace LeagueDeck
 
         public override async void OnTick()
         {
-            // Only check every 2 ticks (~2 seconds) to reduce API load
             _tickCounter++;
             if (_tickCounter % 2 != 0)
                 return;
 
             try
             {
-                // Try to connect to LCU if not connected
                 if (!_lcu.IsConnected)
                 {
                     var processes = Process.GetProcessesByName("LeagueClientUx");
@@ -98,6 +98,8 @@ namespace LeagueDeck
                         if (_wasInChampSelect)
                         {
                             _wasInChampSelect = false;
+                            _lastChampionId = 0;
+                            await Connection.SetDefaultImageAsync();
                             await Connection.SetTitleAsync(string.Empty);
                         }
                         return;
@@ -115,6 +117,8 @@ namespace LeagueDeck
                     if (_wasInChampSelect)
                     {
                         _wasInChampSelect = false;
+                        _lastChampionId = 0;
+                        await Connection.SetDefaultImageAsync();
                         await Connection.SetTitleAsync(string.Empty);
                     }
                     return;
@@ -128,18 +132,8 @@ namespace LeagueDeck
                 else if (_wasInChampSelect)
                 {
                     _wasInChampSelect = false;
-                    await Connection.SetTitleAsync(string.Empty);
-                }
-                else if (phase == "Lobby" || phase == "Matchmaking" || phase == "ReadyCheck")
-                {
-                    await Connection.SetTitleAsync("Lobby");
-                }
-                else if (phase == "InProgress")
-                {
-                    await Connection.SetTitleAsync("In Game");
-                }
-                else
-                {
+                    _lastChampionId = 0;
+                    await Connection.SetDefaultImageAsync();
                     await Connection.SetTitleAsync(string.Empty);
                 }
             }
@@ -180,34 +174,45 @@ namespace LeagueDeck
                 return;
 
             var theirTeam = session["theirTeam"] as JArray;
-            if (theirTeam == null || theirTeam.Count == 0)
+            if (theirTeam == null)
             {
-                await Connection.SetTitleAsync("Pick\nPhase");
+                await Connection.SetTitleAsync("Picking");
                 return;
             }
 
-            var enemyNames = new List<string>();
-            foreach (var member in theirTeam)
+            var summonerIndex = (int)_settings.Summoner;
+            if (summonerIndex >= theirTeam.Count)
             {
-                var championId = member["championId"]?.Value<int>() ?? 0;
-                if (championId > 0)
+                await Connection.SetTitleAsync($"Enemy {summonerIndex + 1}");
+                return;
+            }
+
+            var member = theirTeam[summonerIndex];
+            var championId = member["championId"]?.Value<int>() ?? 0;
+
+            if (championId <= 0)
+            {
+                // Enemy hasn't picked yet
+                if (_lastChampionId != 0)
                 {
-                    var champion = _info.GetChampionByKey(championId);
-                    enemyNames.Add(champion.Name);
+                    _lastChampionId = 0;
+                    await Connection.SetDefaultImageAsync();
                 }
-            }
-
-            if (enemyNames.Count == 0)
-            {
-                await Connection.SetTitleAsync("Pick\nPhase");
+                await Connection.SetTitleAsync($"Enemy {summonerIndex + 1}\n???");
                 return;
             }
 
-            var title = "VS\n" + string.Join("\n", enemyNames.Take(3));
-            if (enemyNames.Count > 3)
-                title += $"\n+{enemyNames.Count - 3}";
+            var champion = _info.GetChampionByKey(championId);
 
-            await Connection.SetTitleAsync(title);
+            // Only update image if champion changed
+            if (championId != _lastChampionId)
+            {
+                _lastChampionId = championId;
+                var champImage = _info.GetChampionImage(champion.Id);
+                await Connection.SetImageAsync(champImage);
+            }
+
+            await Connection.SetTitleAsync(champion.Name);
         }
 
         #endregion
