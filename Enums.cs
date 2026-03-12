@@ -33,6 +33,14 @@ namespace LeagueDeck
         TotalCost = 2,
     }
 
+    public enum ELiveStatsDisplay
+    {
+        KDA = 0,
+        CS = 1,
+        Gold = 2,
+        All = 3,
+    }
+
     public enum EEventType
     {
         GameStart,

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Live Stats</title>
+    <link rel="stylesheet" href="sdpi.css">
+</head>
+<body>
+    <div class="sdpi-wrapper" id="mainSettings">
+        <div type="select" class="sdpi-item" id="select_displayFormat">
+            <div class="sdpi-item-label">Display</div>
+            <select class="sdpi-item-value select sdProperty" id="displayFormat" oninput="setSettings()">
+                <option value="0">KDA</option>
+                <option value="1">CS</option>
+                <option value="2">Gold</option>
+                <option value="3">All (KDA + CS + Gold)</option>
+            </select>
+        </div>
+    </div>
+    <script src="sdtools.common.js"></script>
+</body>
+</html>

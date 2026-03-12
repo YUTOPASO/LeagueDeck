@@ -37,6 +37,9 @@ namespace LeagueDeck.ApiResponse
         [JsonProperty("summonerSpells")]
         public SummonerSpells SummonerSpells { get; set; }
 
+        [JsonProperty("scores")]
+        public Scores Scores { get; set; }
+
         public string GetSummonerSpell(ESpell spell)
         {
             switch (spell)
@@ -159,6 +162,24 @@ namespace LeagueDeck.ApiResponse
 
         [JsonProperty("consumable")]
         public bool IsConsumable { get; set; }
+    }
+
+    public class Scores
+    {
+        [JsonProperty("assists")]
+        public int Assists { get; set; }
+
+        [JsonProperty("creepScore")]
+        public int CreepScore { get; set; }
+
+        [JsonProperty("deaths")]
+        public int Deaths { get; set; }
+
+        [JsonProperty("kills")]
+        public int Kills { get; set; }
+
+        [JsonProperty("wardScore")]
+        public double WardScore { get; set; }
     }
 
     public class Runes

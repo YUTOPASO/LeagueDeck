@@ -29,6 +29,21 @@
       "Tooltip": "Displays when the selected item is purchasable and buys it on activation.",
       "UUID": "dev.kubo.leaguedeck.buyitem",
       "PropertyInspectorPath": "PropertyInspector/BuyItem.html"
+    },
+    {
+      "Icon": "Images/Plugin/pluginIcon",
+      "Name": "Live Stats",
+      "States": [
+        {
+          "Image": "Images/Plugin/pluginIcon",
+          "TitleAlignment": "middle",
+          "FontSize": "12"
+        }
+      ],
+      "SupportedInMultiActions": false,
+      "Tooltip": "Displays real-time KDA, CS, and Gold during a League of Legends game.",
+      "UUID": "dev.kubo.leaguedeck.livestats",
+      "PropertyInspectorPath": "PropertyInspector/LiveStats.html"
     }
   ],
   "Author": "kubo",

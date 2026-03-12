@@ -80,6 +80,8 @@
     <Compile Include="SpellTimerPlugin.cs" />
     <Compile Include="BuyItemSettings.cs" />
     <Compile Include="SpellTimerSettings.cs" />
+    <Compile Include="LiveStatsSettings.cs" />
+    <Compile Include="LiveStatsPlugin.cs" />
     <Compile Include="LeagueInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -177,6 +179,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="PropertyInspector\SpellTimer.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PropertyInspector\LiveStats.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="PropertyInspector\SpellTimer.js">
