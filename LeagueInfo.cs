@@ -394,6 +394,17 @@ namespace LeagueDeck
             return champion;
         }
 
+        public Champion GetChampionByKey(int key)
+        {
+            var champion = _data?.Champions?.FirstOrDefault(x => x.Key == key);
+            if (champion == null)
+            {
+                champion = Champion.Default;
+                Logger.Instance.LogMessage(TracingLevel.ERROR, $"Champion not found by key: {key}");
+            }
+            return champion;
+        }
+
         internal Champion GetChampion(ESummoner summoner)
         {
             if (!SummonerToChampion.TryGetValue(summoner, out var champion))
@@ -655,10 +666,12 @@ namespace LeagueDeck
                 var detailedData = champion.GetValue("data", StringComparison.OrdinalIgnoreCase).First.First;
 
                 var name = detailedData["name"].Value<string>();
+                var key = detailedData["key"].Value<int>();
                 var spells = JsonConvert.DeserializeObject<List<Spell>>(detailedData["spells"].ToString());
 
                 championList.Add(new Champion
                 {
+                    Key = key,
                     Id = id,
                     Name = name,
                     Spells = spells,

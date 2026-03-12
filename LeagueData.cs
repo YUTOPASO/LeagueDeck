@@ -17,12 +17,14 @@ namespace LeagueDeck
 
     public class Champion
     {
+        public int Key { get; set; }
         public string Id { get; set; }
         public string Name { get; set; }
         public List<Spell> Spells { get; set; }
 
         public static Champion Default = new Champion
         {
+            Key = -1,
             Id = "???",
             Name = "???",
             Spells = new List<Spell>

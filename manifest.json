@@ -44,6 +44,21 @@
       "Tooltip": "Displays real-time KDA, CS, and Gold during a League of Legends game.",
       "UUID": "dev.kubo.leaguedeck.livestats",
       "PropertyInspectorPath": "PropertyInspector/LiveStats.html"
+    },
+    {
+      "Icon": "Images/Plugin/pluginIcon",
+      "Name": "Champ Select",
+      "States": [
+        {
+          "Image": "Images/Plugin/pluginIcon",
+          "TitleAlignment": "middle",
+          "FontSize": "10"
+        }
+      ],
+      "SupportedInMultiActions": false,
+      "Tooltip": "Shows enemy champion picks during champion select.",
+      "UUID": "dev.kubo.leaguedeck.champselect",
+      "PropertyInspectorPath": "PropertyInspector/ChampSelect.html"
     }
   ],
   "Author": "kubo",
