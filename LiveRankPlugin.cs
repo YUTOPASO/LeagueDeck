@@ -31,7 +31,7 @@ namespace LeagueDeck
 
             Task.Run(async () =>
             {
-                using (var icon = Utilities.GenerateIcon("R", Color.FromArgb(180, 130, 30)))
+                using (var icon = Utilities.LoadIcon("ranked.png") ?? Utilities.GenerateIcon("R", Color.FromArgb(180, 130, 30)))
                     await Connection.SetImageAsync(Utilities.ImageToBase64(icon));
                 await Connection.SetTitleAsync("Rank");
             });

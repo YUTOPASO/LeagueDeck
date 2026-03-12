@@ -154,6 +154,39 @@ namespace LeagueDeck
             };
         }
 
+        private static readonly string _iconFolder = Path.Combine(Environment.CurrentDirectory, "Images", "Icons");
+
+        /// <summary>
+        /// Loads an icon from Images/Icons folder, resizes to 144x144 with black background.
+        /// </summary>
+        public static Image LoadIcon(string filename)
+        {
+            var path = Path.Combine(_iconFolder, filename);
+            if (!File.Exists(path))
+                return null;
+
+            var bmp = new Bitmap(144, 144);
+            using (var g = Graphics.FromImage(bmp))
+            {
+                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+                g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                g.Clear(Color.Black);
+
+                using (var src = Image.FromFile(path))
+                {
+                    // Fit image within 144x144, centered
+                    float scale = Math.Min(130f / src.Width, 130f / src.Height);
+                    int w = (int)(src.Width * scale);
+                    int h = (int)(src.Height * scale);
+                    int x = (144 - w) / 2;
+                    int y = (144 - h) / 2;
+                    g.DrawImage(src, x, y, w, h);
+                }
+            }
+
+            return bmp;
+        }
+
         /// <summary>
         /// Generates a 144x144 icon with a colored background circle and text/symbol.
         /// </summary>

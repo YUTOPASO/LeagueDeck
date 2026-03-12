@@ -47,7 +47,7 @@ namespace LeagueDeck
 
             Task.Run(async () =>
             {
-                using (var icon = Utilities.GenerateIcon("AS", Color.FromArgb(200, 150, 30)))
+                using (var icon = Utilities.LoadIcon("summoner_flash.png") ?? Utilities.GenerateIcon("AS", Color.FromArgb(200, 150, 30)))
                     await Connection.SetImageAsync(Utilities.ImageToBase64(icon));
             });
             UpdateTitle();

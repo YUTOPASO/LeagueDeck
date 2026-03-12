@@ -28,7 +28,7 @@ namespace LeagueDeck
 
             Task.Run(async () =>
             {
-                using (var icon = Utilities.GenerateIcon("GN", Color.FromArgb(50, 150, 80)))
+                using (var icon = Utilities.LoadIcon("timer.png") ?? Utilities.GenerateIcon("GN", Color.FromArgb(50, 150, 80)))
                     await Connection.SetImageAsync(Utilities.ImageToBase64(icon));
                 await Connection.SetTitleAsync(string.Empty);
             });

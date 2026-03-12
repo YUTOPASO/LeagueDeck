@@ -220,9 +220,9 @@ namespace LeagueDeck
         {
             switch (_settings.ObjectiveType)
             {
-                case EObjectiveType.Dragon: return Utilities.GenerateIcon("D", Color.FromArgb(200, 50, 50));     // Red
-                case EObjectiveType.Baron: return Utilities.GenerateIcon("B", Color.FromArgb(130, 50, 180));      // Purple
-                case EObjectiveType.Herald: return Utilities.GenerateIcon("H", Color.FromArgb(50, 130, 200));     // Blue
+                case EObjectiveType.Dragon: return Utilities.LoadIcon("dragon.png") ?? Utilities.GenerateIcon("D", Color.FromArgb(200, 50, 50));
+                case EObjectiveType.Baron: return Utilities.LoadIcon("baron.png") ?? Utilities.GenerateIcon("B", Color.FromArgb(130, 50, 180));
+                case EObjectiveType.Herald: return Utilities.LoadIcon("herald.png") ?? Utilities.GenerateIcon("H", Color.FromArgb(50, 130, 200));
                 default: return Utilities.GenerateIcon("?", Color.Gray);
             }
         }
