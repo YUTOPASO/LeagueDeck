@@ -76,6 +76,20 @@
     },
     {
       "Icon": "Images/Plugin/pluginIcon",
+      "Name": "Game Notifier",
+      "States": [
+        {
+          "Image": "Images/Plugin/pluginIcon",
+          "TitleAlignment": "middle",
+          "FontSize": "14"
+        }
+      ],
+      "SupportedInMultiActions": false,
+      "Tooltip": "Shows game timer during match and notifies when game starts/ends.",
+      "UUID": "dev.kubo.leaguedeck.gamenotifier"
+    },
+    {
+      "Icon": "Images/Plugin/pluginIcon",
       "Name": "Rune Setup",
       "States": [
         {

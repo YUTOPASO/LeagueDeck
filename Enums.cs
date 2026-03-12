@@ -57,5 +57,6 @@ namespace LeagueDeck
         InhibKilled,
 		InhibRespawningSoon,
         InhibRespawned,
+        GameEnd,
     }
 }

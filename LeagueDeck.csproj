@@ -87,6 +87,7 @@
     <Compile Include="ChampSelectPlugin.cs" />
     <Compile Include="OpggPlugin.cs" />
     <Compile Include="RuneSetupPlugin.cs" />
+    <Compile Include="GameNotifierPlugin.cs" />
     <Compile Include="LeagueInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
