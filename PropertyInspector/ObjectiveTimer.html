@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Objective Timer</title>
+    <link rel="stylesheet" href="sdpi.css">
+    <script src="sdtools.common.js"></script>
+</head>
+<body>
+    <div class="sdpi-wrapper">
+        <div type="select" class="sdpi-item">
+            <div class="sdpi-item-label">Objective</div>
+            <select class="sdpi-item-value select" id="objectiveType" onchange="setSettings()">
+                <option value="0">Dragon</option>
+                <option value="1">Baron</option>
+                <option value="2">Herald</option>
+            </select>
+        </div>
+    </div>
+    <script>
+        function setSettings() {
+            var payload = {};
+            payload.objectiveType = parseInt(document.getElementById('objectiveType').value);
+            setSettingsToPlugin(payload);
+        }
+        document.addEventListener('websocketCreate', function () {
+            websocket.addEventListener('message', function (event) {
+                var jsonObj = JSON.parse(event.data);
+                if (jsonObj.event === 'sendToPropertyInspector') {
+                    var payload = jsonObj.payload;
+                    if (payload.objectiveType !== undefined) {
+                        document.getElementById('objectiveType').value = payload.objectiveType;
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

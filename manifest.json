@@ -99,8 +99,9 @@
         }
       ],
       "SupportedInMultiActions": false,
-      "Tooltip": "Automatically tracks Dragon, Baron, and Herald respawn timers. Blinks at 60s remaining.",
-      "UUID": "dev.kubo.leaguedeck.objectivetimer"
+      "Tooltip": "Tracks Dragon, Baron, or Herald respawn timer. Place one per objective. Blinks at 60s remaining.",
+      "UUID": "dev.kubo.leaguedeck.objectivetimer",
+      "PropertyInspectorPath": "PropertyInspector/ObjectiveTimer.html"
     },
     {
       "Icon": "Images/Plugin/pluginIcon",

@@ -1,12 +1,19 @@
 using BarRaider.SdTools;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace LeagueDeck
 {
+    public enum EObjectiveType
+    {
+        Dragon = 0,
+        Baron = 1,
+        Herald = 2,
+    }
+
     [PluginActionId("dev.kubo.leaguedeck.objectivetimer")]
     public class ObjectiveTimerPlugin : PluginBase
     {
@@ -18,15 +25,12 @@ namespace LeagueDeck
         private CancellationTokenSource _cts = new CancellationTokenSource();
 
         private LeagueInfo _info;
+        private ObjectiveTimerSettings _settings;
 
         private bool _isInGame;
         private int _lastProcessedEventId = -1;
 
-        // Active timers: objective type -> respawn game time (seconds)
-        private double _dragonRespawnAt = -1;
-        private double _baronRespawnAt = -1;
-        private double _heraldRespawnAt = -1;
-
+        private double _respawnAt = -1;
         private double _currentGameTime;
         private int _tickCounter;
         private bool _blinkOn;
@@ -38,10 +42,15 @@ namespace LeagueDeck
 
             _info = LeagueInfo.GetInstance(_cts.Token);
 
+            if (payload.Settings == null || !payload.Settings.HasValues)
+                _settings = ObjectiveTimerSettings.CreateDefaultSettings();
+            else
+                _settings = payload.Settings.ToObject<ObjectiveTimerSettings>();
+
             Connection.OnApplicationDidLaunch += Connection_OnApplicationDidLaunch;
             Connection.OnApplicationDidTerminate += Connection_OnApplicationDidTerminate;
 
-            Task.Run(async () => await Connection.SetTitleAsync(string.Empty));
+            Task.Run(async () => await Connection.SetTitleAsync(GetLabel()));
         }
 
         #region Events
@@ -53,9 +62,7 @@ namespace LeagueDeck
 
             _isInGame = true;
             _lastProcessedEventId = -1;
-            _dragonRespawnAt = -1;
-            _baronRespawnAt = -1;
-            _heraldRespawnAt = -1;
+            _respawnAt = -1;
         }
 
         private void Connection_OnApplicationDidTerminate(object sender, BarRaider.SdTools.Wrappers.SDEventReceivedEventArgs<BarRaider.SdTools.Events.ApplicationDidTerminate> e)
@@ -64,7 +71,8 @@ namespace LeagueDeck
                 return;
 
             _isInGame = false;
-            Task.Run(async () => await Connection.SetTitleAsync(string.Empty));
+            _respawnAt = -1;
+            Task.Run(async () => await Connection.SetTitleAsync(GetLabel()));
         }
 
         #endregion
@@ -101,72 +109,42 @@ namespace LeagueDeck
 
                         _lastProcessedEventId = evt.Id;
 
-                        switch (evt.Type)
+                        var targetEvent = GetTargetEventType();
+                        if (evt.Type == targetEvent)
                         {
-                            case EEventType.DragonKill:
-                                _dragonRespawnAt = evt.Time + DragonRespawnSeconds;
-                                break;
-                            case EEventType.BaronKill:
-                                _baronRespawnAt = evt.Time + BaronRespawnSeconds;
-                                break;
-                            case EEventType.HeraldKill:
-                                _heraldRespawnAt = evt.Time + HeraldRespawnSeconds;
-                                break;
+                            _respawnAt = evt.Time + GetRespawnSeconds();
                         }
                     }
                 }
 
-                // Clear expired timers
-                if (_dragonRespawnAt > 0 && _currentGameTime >= _dragonRespawnAt)
-                    _dragonRespawnAt = -1;
-                if (_baronRespawnAt > 0 && _currentGameTime >= _baronRespawnAt)
-                    _baronRespawnAt = -1;
-                if (_heraldRespawnAt > 0 && _currentGameTime >= _heraldRespawnAt)
-                    _heraldRespawnAt = -1;
+                // Clear expired timer
+                if (_respawnAt > 0 && _currentGameTime >= _respawnAt)
+                    _respawnAt = -1;
 
-                // Build display text
-                var lines = new List<string>();
-
-                if (_dragonRespawnAt > 0)
+                // Display
+                if (_respawnAt > 0)
                 {
-                    var remaining = (int)(_dragonRespawnAt - _currentGameTime);
+                    var remaining = (int)(_respawnAt - _currentGameTime);
                     if (remaining > 0)
                     {
-                        var label = FormatTimer("D", remaining);
                         if (remaining <= BlinkThreshold && !_blinkOn)
-                            label = "";
-                        lines.Add(label);
+                            await Connection.SetTitleAsync(GetLabel());
+                        else
+                        {
+                            var m = remaining / 60;
+                            var s = remaining % 60;
+                            await Connection.SetTitleAsync($"{GetLabel()}\n{m}:{s:D2}");
+                        }
                     }
-                }
-
-                if (_baronRespawnAt > 0)
-                {
-                    var remaining = (int)(_baronRespawnAt - _currentGameTime);
-                    if (remaining > 0)
+                    else
                     {
-                        var label = FormatTimer("B", remaining);
-                        if (remaining <= BlinkThreshold && !_blinkOn)
-                            label = "";
-                        lines.Add(label);
+                        await Connection.SetTitleAsync(GetLabel());
                     }
                 }
-
-                if (_heraldRespawnAt > 0)
-                {
-                    var remaining = (int)(_heraldRespawnAt - _currentGameTime);
-                    if (remaining > 0)
-                    {
-                        var label = FormatTimer("H", remaining);
-                        if (remaining <= BlinkThreshold && !_blinkOn)
-                            label = "";
-                        lines.Add(label);
-                    }
-                }
-
-                if (lines.Count > 0)
-                    await Connection.SetTitleAsync(string.Join("\n", lines));
                 else
-                    await Connection.SetTitleAsync(string.Empty);
+                {
+                    await Connection.SetTitleAsync(GetLabel());
+                }
             }
             catch (Exception ex)
             {
@@ -174,7 +152,13 @@ namespace LeagueDeck
             }
         }
 
-        public override void ReceivedSettings(ReceivedSettingsPayload payload) { }
+        public override void ReceivedSettings(ReceivedSettingsPayload payload)
+        {
+            _settings = payload.Settings.ToObject<ObjectiveTimerSettings>();
+            _respawnAt = -1;
+            Task.Run(async () => await Connection.SetTitleAsync(GetLabel()));
+        }
+
         public override void ReceivedGlobalSettings(ReceivedGlobalSettingsPayload payload) { }
 
         public override void Dispose()
@@ -190,13 +174,50 @@ namespace LeagueDeck
 
         #region Private Methods
 
-        private string FormatTimer(string prefix, int seconds)
+        private string GetLabel()
         {
-            var m = seconds / 60;
-            var s = seconds % 60;
-            return $"{prefix} {m}:{s:D2}";
+            switch (_settings.ObjectiveType)
+            {
+                case EObjectiveType.Dragon: return "Dragon";
+                case EObjectiveType.Baron: return "Baron";
+                case EObjectiveType.Herald: return "Herald";
+                default: return "Obj";
+            }
+        }
+
+        private EEventType GetTargetEventType()
+        {
+            switch (_settings.ObjectiveType)
+            {
+                case EObjectiveType.Dragon: return EEventType.DragonKill;
+                case EObjectiveType.Baron: return EEventType.BaronKill;
+                case EObjectiveType.Herald: return EEventType.HeraldKill;
+                default: return EEventType.DragonKill;
+            }
+        }
+
+        private int GetRespawnSeconds()
+        {
+            switch (_settings.ObjectiveType)
+            {
+                case EObjectiveType.Dragon: return DragonRespawnSeconds;
+                case EObjectiveType.Baron: return BaronRespawnSeconds;
+                case EObjectiveType.Herald: return HeraldRespawnSeconds;
+                default: return DragonRespawnSeconds;
+            }
         }
 
         #endregion
+    }
+
+    public class ObjectiveTimerSettings
+    {
+        public static ObjectiveTimerSettings CreateDefaultSettings()
+        {
+            return new ObjectiveTimerSettings { ObjectiveType = EObjectiveType.Dragon };
+        }
+
+        [JsonProperty("objectiveType")]
+        public EObjectiveType ObjectiveType { get; set; }
     }
 }
