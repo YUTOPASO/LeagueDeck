@@ -2,6 +2,7 @@ using BarRaider.SdTools;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Drawing;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -50,7 +51,11 @@ namespace LeagueDeck
             Connection.OnApplicationDidLaunch += Connection_OnApplicationDidLaunch;
             Connection.OnApplicationDidTerminate += Connection_OnApplicationDidTerminate;
 
-            Task.Run(async () => await Connection.SetTitleAsync(GetLabel()));
+            Task.Run(async () =>
+            {
+                await Connection.SetImageAsync(Utilities.ImageToBase64(GetObjectiveIcon()));
+                await Connection.SetTitleAsync(GetLabel());
+            });
         }
 
         #region Events
@@ -156,7 +161,11 @@ namespace LeagueDeck
         {
             _settings = payload.Settings.ToObject<ObjectiveTimerSettings>();
             _respawnAt = -1;
-            Task.Run(async () => await Connection.SetTitleAsync(GetLabel()));
+            Task.Run(async () =>
+            {
+                await Connection.SetImageAsync(Utilities.ImageToBase64(GetObjectiveIcon()));
+                await Connection.SetTitleAsync(GetLabel());
+            });
         }
 
         public override void ReceivedGlobalSettings(ReceivedGlobalSettingsPayload payload) { }
@@ -204,6 +213,17 @@ namespace LeagueDeck
                 case EObjectiveType.Baron: return BaronRespawnSeconds;
                 case EObjectiveType.Herald: return HeraldRespawnSeconds;
                 default: return DragonRespawnSeconds;
+            }
+        }
+
+        private Image GetObjectiveIcon()
+        {
+            switch (_settings.ObjectiveType)
+            {
+                case EObjectiveType.Dragon: return Utilities.GenerateIcon("D", Color.FromArgb(200, 50, 50));     // Red
+                case EObjectiveType.Baron: return Utilities.GenerateIcon("B", Color.FromArgb(130, 50, 180));      // Purple
+                case EObjectiveType.Herald: return Utilities.GenerateIcon("H", Color.FromArgb(50, 130, 200));     // Blue
+                default: return Utilities.GenerateIcon("?", Color.Gray);
             }
         }
 

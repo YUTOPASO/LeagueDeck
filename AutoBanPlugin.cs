@@ -2,6 +2,7 @@ using BarRaider.SdTools;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Drawing;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -32,6 +33,11 @@ namespace LeagueDeck
             else
                 _settings = payload.Settings.ToObject<AutoBanSettings>();
 
+            Task.Run(async () =>
+            {
+                using (var icon = Utilities.GenerateIcon("AB", Color.FromArgb(200, 40, 40)))
+                    await Connection.SetImageAsync(Utilities.ImageToBase64(icon));
+            });
             UpdateTitle();
         }
 

@@ -1,6 +1,7 @@
 using BarRaider.SdTools;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Drawing;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -45,7 +46,17 @@ namespace LeagueDeck
 
                     await _info.UpdateTask;
 
-                    await Connection.SetDefaultImageAsync();
+                    using (var icon = Utilities.GenerateIcon("LS", Color.FromArgb(50, 130, 180)))
+                        await Connection.SetImageAsync(Utilities.ImageToBase64(icon));
+                    await Connection.SetTitleAsync(string.Empty);
+                });
+            }
+            else
+            {
+                Task.Run(async () =>
+                {
+                    using (var icon = Utilities.GenerateIcon("LS", Color.FromArgb(50, 130, 180)))
+                        await Connection.SetImageAsync(Utilities.ImageToBase64(icon));
                     await Connection.SetTitleAsync(string.Empty);
                 });
             }

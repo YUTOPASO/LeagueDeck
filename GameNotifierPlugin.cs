@@ -1,5 +1,6 @@
 using BarRaider.SdTools;
 using System;
+using System.Drawing;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -25,7 +26,12 @@ namespace LeagueDeck
             Connection.OnApplicationDidLaunch += Connection_OnApplicationDidLaunch;
             Connection.OnApplicationDidTerminate += Connection_OnApplicationDidTerminate;
 
-            Task.Run(async () => await Connection.SetTitleAsync(string.Empty));
+            Task.Run(async () =>
+            {
+                using (var icon = Utilities.GenerateIcon("GN", Color.FromArgb(50, 150, 80)))
+                    await Connection.SetImageAsync(Utilities.ImageToBase64(icon));
+                await Connection.SetTitleAsync(string.Empty);
+            });
         }
 
         #region Events

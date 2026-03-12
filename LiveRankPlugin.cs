@@ -2,6 +2,7 @@ using BarRaider.SdTools;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Drawing;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -28,7 +29,12 @@ namespace LeagueDeck
             else
                 _settings = payload.Settings.ToObject<LiveRankSettings>();
 
-            Task.Run(async () => await Connection.SetTitleAsync("Rank"));
+            Task.Run(async () =>
+            {
+                using (var icon = Utilities.GenerateIcon("R", Color.FromArgb(180, 130, 30)))
+                    await Connection.SetImageAsync(Utilities.ImageToBase64(icon));
+                await Connection.SetTitleAsync("Rank");
+            });
         }
 
         public override void KeyPressed(KeyPayload payload)

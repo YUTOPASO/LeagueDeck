@@ -154,6 +154,57 @@ namespace LeagueDeck
             };
         }
 
-        #endregion    
+        /// <summary>
+        /// Generates a 144x144 icon with a colored background circle and text/symbol.
+        /// </summary>
+        public static Image GenerateIcon(string text, Color bgColor, Color textColor = default(Color))
+        {
+            if (textColor == default(Color))
+                textColor = Color.White;
+
+            var bmp = new Bitmap(144, 144);
+            using (var g = Graphics.FromImage(bmp))
+            {
+                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+                g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
+                g.Clear(Color.Black);
+
+                // Draw filled circle
+                using (var brush = new SolidBrush(bgColor))
+                {
+                    g.FillEllipse(brush, 8, 8, 128, 128);
+                }
+
+                // Draw text centered
+                float fontSize = text.Length <= 2 ? 48f : (text.Length <= 4 ? 32f : 22f);
+                using (var font = new Font("Segoe UI", fontSize, FontStyle.Bold))
+                using (var brush = new SolidBrush(textColor))
+                {
+                    var sf = new StringFormat
+                    {
+                        Alignment = StringAlignment.Center,
+                        LineAlignment = StringAlignment.Center
+                    };
+                    g.DrawString(text, font, brush, new RectangleF(0, 0, 144, 144), sf);
+                }
+            }
+
+            return bmp;
+        }
+
+        /// <summary>
+        /// Converts an Image to a base64 string suitable for SetImageAsync.
+        /// </summary>
+        public static string ImageToBase64(Image image)
+        {
+            using (var ms = new MemoryStream())
+            {
+                image.Save(ms, ImageFormat.Png);
+                var base64 = Convert.ToBase64String(ms.ToArray());
+                return "data:image/png;base64," + base64;
+            }
+        }
+
+        #endregion
     }
 }

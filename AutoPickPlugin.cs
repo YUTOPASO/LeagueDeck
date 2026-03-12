@@ -2,6 +2,7 @@ using BarRaider.SdTools;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Drawing;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -32,6 +33,11 @@ namespace LeagueDeck
             else
                 _settings = payload.Settings.ToObject<AutoPickSettings>();
 
+            Task.Run(async () =>
+            {
+                using (var icon = Utilities.GenerateIcon("AP", Color.FromArgb(30, 120, 200)))
+                    await Connection.SetImageAsync(Utilities.ImageToBase64(icon));
+            });
             UpdateTitle();
         }
 

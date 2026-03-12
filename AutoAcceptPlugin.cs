@@ -1,5 +1,6 @@
 using BarRaider.SdTools;
 using System;
+using System.Drawing;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -18,7 +19,12 @@ namespace LeagueDeck
             Logger.Instance.LogMessage(TracingLevel.DEBUG, "AutoAcceptPlugin - Constructor");
             _lcu = LcuClient.Instance;
 
-            Task.Run(async () => await Connection.SetTitleAsync("Auto\nAccept"));
+            Task.Run(async () =>
+            {
+                using (var icon = Utilities.GenerateIcon("AA", Color.FromArgb(40, 160, 60)))
+                    await Connection.SetImageAsync(Utilities.ImageToBase64(icon));
+                await Connection.SetTitleAsync("Auto\nAccept");
+            });
         }
 
         public override async void KeyPressed(KeyPayload payload)
