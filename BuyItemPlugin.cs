@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace LeagueDeck
 {
-    [PluginActionId("dev.timeblaster.leaguedeck.buyitem")]
+    [PluginActionId("dev.kubo.leaguedeck.buyitem")]
     public class BuyItemPlugin : PluginBase
     {
         #region vars

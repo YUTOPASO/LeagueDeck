@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace LeagueDeck
 {
-    [PluginActionId("dev.timeblaster.leaguedeck.spelltimer")]
+    [PluginActionId("dev.kubo.leaguedeck.spelltimer")]
     public class SpellTimerPlugin : PluginBase
     {
         #region vars
