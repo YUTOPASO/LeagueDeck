@@ -125,6 +125,7 @@ namespace LeagueDeck
         public static async Task<string> GetApiResponse(string url, CancellationToken ct)
         {
             HttpWebResponse response = null;
+            int retries = 0;
             while (response == null)
             {
                 try
@@ -133,6 +134,7 @@ namespace LeagueDeck
                         return string.Empty;
 
                     var request = (HttpWebRequest)WebRequest.Create(url);
+                    request.Timeout = 3000;
 
                     // accept all SSL certificates
                     request.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
@@ -141,6 +143,9 @@ namespace LeagueDeck
                 }
                 catch
                 {
+                    retries++;
+                    if (retries >= 10)
+                        throw new TimeoutException($"Failed to get API response from {url} after {retries} retries");
                     await Task.Delay(500, ct);
                 }
             }

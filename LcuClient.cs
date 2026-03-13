@@ -10,6 +10,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace LeagueDeck
@@ -48,21 +49,87 @@ namespace LeagueDeck
                 var processes = Process.GetProcessesByName("LeagueClientUx");
                 if (processes.Length == 0)
                 {
+                    Logger.Instance.LogMessage(TracingLevel.DEBUG, "LcuClient - LeagueClientUx process not found");
                     _connected = false;
                     return false;
                 }
 
-                var process = processes[0];
+                // Try command line args first (works across 32/64-bit process boundary)
+                if (TryConnectFromCommandLine(processes[0].Id))
+                    return true;
+
+                // Fallback: try lockfile via MainModule path
+                if (TryConnectFromLockfile(processes[0]))
+                    return true;
+
+                _connected = false;
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Logger.Instance.LogMessage(TracingLevel.DEBUG, $"LcuClient TryConnect failed: {ex.Message}");
+                _connected = false;
+                return false;
+            }
+        }
+
+        private bool TryConnectFromCommandLine(int processId)
+        {
+            try
+            {
+                // Use wmic to get command line (works from 32-bit process to 64-bit process)
+                var psi = new ProcessStartInfo("wmic",
+                    $"process where processid={processId} get commandline /format:list")
+                {
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                };
+
+                string output;
+                using (var proc = Process.Start(psi))
+                {
+                    output = proc.StandardOutput.ReadToEnd();
+                    proc.WaitForExit(3000);
+                }
+
+                if (string.IsNullOrEmpty(output))
+                    return false;
+
+                var portMatch = Regex.Match(output, @"--app-port=(\d+)");
+                var authMatch = Regex.Match(output, @"--remoting-auth-token=([^\s""]+)");
+
+                if (!portMatch.Success || !authMatch.Success)
+                {
+                    Logger.Instance.LogMessage(TracingLevel.DEBUG, "LcuClient - Could not parse port/token from command line");
+                    return false;
+                }
+
+                _port = int.Parse(portMatch.Groups[1].Value);
+                _authToken = authMatch.Groups[1].Value;
+
+                SetupHttpClient();
+                _connected = true;
+                Logger.Instance.LogMessage(TracingLevel.DEBUG, $"LcuClient connected via cmdline on port {_port}");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Logger.Instance.LogMessage(TracingLevel.DEBUG, $"LcuClient TryConnectFromCommandLine failed: {ex.Message}");
+                return false;
+            }
+        }
+
+        private bool TryConnectFromLockfile(Process process)
+        {
+            try
+            {
                 var clientDir = Path.GetDirectoryName(process.MainModule.FileName);
                 var lockfilePath = Path.Combine(clientDir, "lockfile");
 
                 if (!File.Exists(lockfilePath))
-                {
-                    _connected = false;
                     return false;
-                }
 
-                // lockfile format: processName:PID:port:password:protocol
                 string lockfileContent;
                 using (var fs = new FileStream(lockfilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 using (var sr = new StreamReader(fs))
@@ -72,30 +139,31 @@ namespace LeagueDeck
 
                 var parts = lockfileContent.Split(':');
                 if (parts.Length < 5)
-                {
-                    _connected = false;
                     return false;
-                }
 
                 _port = int.Parse(parts[2]);
                 _authToken = parts[3];
 
-                _httpClient = new HttpClient();
-                _httpClient.BaseAddress = new Uri($"https://127.0.0.1:{_port}");
-                var credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"riot:{_authToken}"));
-                _httpClient.DefaultRequestHeaders.Authorization =
-                    new AuthenticationHeaderValue("Basic", credentials);
-
+                SetupHttpClient();
                 _connected = true;
-                Logger.Instance.LogMessage(TracingLevel.DEBUG, $"LcuClient connected on port {_port}");
+                Logger.Instance.LogMessage(TracingLevel.DEBUG, $"LcuClient connected via lockfile on port {_port}");
                 return true;
             }
             catch (Exception ex)
             {
-                Logger.Instance.LogMessage(TracingLevel.DEBUG, $"LcuClient TryConnect failed: {ex.Message}");
-                _connected = false;
+                Logger.Instance.LogMessage(TracingLevel.DEBUG, $"LcuClient TryConnectFromLockfile failed: {ex.Message}");
                 return false;
             }
+        }
+
+        private void SetupHttpClient()
+        {
+            _httpClient?.Dispose();
+            _httpClient = new HttpClient();
+            _httpClient.BaseAddress = new Uri($"https://127.0.0.1:{_port}");
+            var credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"riot:{_authToken}"));
+            _httpClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Basic", credentials);
         }
 
         public void Disconnect()

@@ -760,19 +760,24 @@ namespace LeagueDeck
             return itemList;
         }
 
-        private async Task<List<Summoner>> GetParticipants(CancellationToken ct)
+        private async Task<List<Summoner>> GetParticipants(CancellationToken ct, int maxRetries = 10)
         {
             List<Summoner> participants = null;
-            while (participants == null || participants.Count == 0)
+            int retries = 0;
+            while ((participants == null || participants.Count == 0) && retries < maxRetries)
             {
                 try
                 {
+                    if (ct.IsCancellationRequested)
+                        return null;
+
                     var url = cInGameApiBaseUrl + "/playerlist";
                     var json = await Utilities.GetApiResponse(url, ct);
                     participants = JsonConvert.DeserializeObject<List<Summoner>>(json);
                 }
                 catch
                 {
+                    retries++;
                     await Task.Delay(500, ct);
                 }
             }
